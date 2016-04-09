@@ -30,6 +30,6 @@ dependencies {
     compile "com.android.support:design:${supportLibVersion}"
 
     compile 'com.jakewharton:butterknife:7.0.1'
-
+    compile 'com.github.rahatarmanahmed:circularprogressview:2.4.0'
     testCompile 'junit:junit:4.12'
 }
