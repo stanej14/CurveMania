@@ -3,6 +3,7 @@ package cz.borcizfitu.curvemania;
 import android.app.Application;
 
 import cz.borcizfitu.curvemania.cast.CastConnectionManager;
+import cz.borcizfitu.curvemania.cast.GameManagerMessageListener;
 import cz.borcizfitu.curvemania.cast.SendMessageHandler;
 
 /**
@@ -14,6 +15,7 @@ public class App extends Application {
     private static App sInstance;
 
     private CastConnectionManager mCastConnectionManager;
+    private GameManagerMessageListener mGameManagerMessageListener;
     private SendMessageHandler mSendMessageHandler;
 
     public static App getInstance() {
@@ -24,7 +26,9 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sInstance = this;
-        mCastConnectionManager = new CastConnectionManager(this);
+
+        mGameManagerMessageListener = new GameManagerMessageListener();
+        mCastConnectionManager = new CastConnectionManager(this, mGameManagerMessageListener);
         mSendMessageHandler = new SendMessageHandler(mCastConnectionManager);
     }
 
@@ -34,5 +38,9 @@ public class App extends Application {
 
     public SendMessageHandler getSendMessageHandler() {
         return mSendMessageHandler;
+    }
+
+    public GameManagerMessageListener getGameManagerMessageListener() {
+        return mGameManagerMessageListener;
     }
 }

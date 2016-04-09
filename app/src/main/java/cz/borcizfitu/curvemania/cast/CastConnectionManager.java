@@ -15,10 +15,13 @@ import com.google.android.gms.cast.CastDevice;
 import com.google.android.gms.cast.CastMediaControlIntent;
 import com.google.android.gms.cast.games.GameManagerClient;
 import com.google.android.gms.cast.games.GameManagerClient.GameManagerInstanceResult;
+import com.google.android.gms.cast.games.GameManagerState;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.util.Observable;
@@ -34,6 +37,7 @@ public class CastConnectionManager extends Observable {
     private static final String TAG = "CastConnectionManager";
 
     private final Context mContext;
+    private GameManagerMessageListener mListener;
     private final MediaRouter mMediaRouter;
     private final MessageReceivedCallback mMessageReceivedCallback;
     private MediaRouteSelector mMediaRouteSelector;
@@ -45,8 +49,9 @@ public class CastConnectionManager extends Observable {
     private String mCastSessionId;
     private GameManagerClient mGameManagerClient;
 
-    public CastConnectionManager(Context context) {
+    public CastConnectionManager(Context context, GameManagerMessageListener listener) {
         mContext = context;
+        mListener = listener;
 
         mMediaRouter = MediaRouter.getInstance(context);
         String appId = Constants.APP_ID;
@@ -233,8 +238,9 @@ public class CastConnectionManager extends Observable {
                             if (status.isSuccess()) {
                                 Log.d(TAG, "Launching game: " + appMetaData.getName());
                                 mCastSessionId = result.getSessionId();
-                                GameManagerClient.getInstanceFor(mApiClient, mCastSessionId).setResultCallback(
-                                        new GameManagerGetInstanceCallback());
+                                GameManagerClient
+                                        .getInstanceFor(mApiClient, mCastSessionId)
+                                        .setResultCallback(new GameManagerGetInstanceCallback());
 
                                 try {
                                     Cast.CastApi.setMessageReceivedCallbacks(mApiClient, mMessageReceivedCallback.getNamespace(), mMessageReceivedCallback);
@@ -283,6 +289,25 @@ public class CastConnectionManager extends Observable {
                 setSelectedDevice(null);
             }
             mGameManagerClient = gameManagerResult.getGameManagerClient();
+            mGameManagerClient.setListener(new GameManagerClient.Listener() {
+                @Override
+                public void onStateChanged(GameManagerState gameManagerState, GameManagerState gameManagerState1) {
+                    Log.i(TAG, gameManagerState1.toString());
+                    Log.i(TAG, "onStateChanged" + gameManagerState1.getGameStatusText() + "int = " +
+                            "" + gameManagerState1.getGameplayState());
+                    Log.i(TAG, "onStateChanged2" + gameManagerState.getGameStatusText() + "int =" + gameManagerState1.getGameplayState());
+                    mListener.onGameStateChanged(gameManagerState1.getGameplayState());
+                }
+
+                @Override
+                public void onGameMessageReceived(String s, JSONObject jsonObject) {
+                    Log.i(TAG, "GAME MESSAGE RECEIVED" + s + jsonObject);
+                    mListener.onGameMessageReceived(jsonObject);
+                }
+            });
+
+//            mGameManagerClient.sendPlayerAvailableRequest("1", new JSONObject());
+
             setChanged();
             notifyObservers();
         }
@@ -296,7 +321,7 @@ public class CastConnectionManager extends Observable {
 
         @Override
         public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
-
+            Log.i(TAG, message);
         }
     }
 

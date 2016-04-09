@@ -1,7 +1,5 @@
 package cz.borcizfitu.curvemania.cast;
 
-import android.app.Activity;
-import android.content.Context;
 import android.util.Log;
 
 import org.json.JSONException;
