@@ -11,7 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.LinearLayout;
 
 import com.github.rahatarmanahmed.cpv.CircularProgressView;
@@ -106,6 +105,7 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
                 return true;
             }
         });
+        showActualStatus();
         return view;
     }
 
@@ -118,6 +118,7 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
     @OnClick(R.id.btn_start_game)
     public void onStartClicked() {
         gameController.onStartGame();
+        mGameStarted = true;
     }
 
     public void setIsAdmin(boolean b) {
@@ -130,8 +131,8 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
             mStartButton.setVisibility(View.GONE);
             mProgress.setVisibility(View.GONE);
             mBlurryLayout.setVisibility(View.GONE);
-            mLeftButton.setClickable(true);
-            mRightButton.setClickable(true);
+            mLeftButton.setEnabled(true);
+            mRightButton.setEnabled(true);
         } else {
             if (mIsAdmin) {
                 mStartButton.setVisibility(View.VISIBLE);
@@ -141,8 +142,8 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
                 mProgress.setVisibility(View.VISIBLE);
             }
             mBlurryLayout.setVisibility(View.VISIBLE);
-            mLeftButton.setClickable(false);
-            mRightButton.setClickable(false);
+            mLeftButton.setEnabled(false);
+            mRightButton.setEnabled(false);
         }
     }
 
