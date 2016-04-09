@@ -51,7 +51,7 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
     @Bind(R.id.blurry_layout)
     FrameLayout mBlurryLayout;
 
-    private boolean mIsAdmin = false;
+    private boolean mIsAdmin = true;
     private boolean mGameStarted = false;
     private IGameController gameController = new GameControllerImpl();
 
@@ -106,7 +106,6 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
                 return true;
             }
         });
-
         return view;
     }
 
