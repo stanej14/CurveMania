@@ -44,12 +44,6 @@ public class MainActivity extends AppCompatActivity implements Observer {
         if (mGameFragment == null) {
             mGameFragment = new GameFragment();
         }
-//
-//        if (savedInstanceState == null) {
-//            getFragmentManager().beginTransaction()
-//                    .add(R.id.container, new CastConnectionFragment(), CastConnectionFragment.TAG)
-//                    .commit();
-//        }
     }
 
     @Override

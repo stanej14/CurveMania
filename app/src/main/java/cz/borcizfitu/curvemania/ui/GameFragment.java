@@ -20,11 +20,13 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTouch;
 import cz.borcizfitu.curvemania.R;
+import cz.borcizfitu.curvemania.cast.GameControllerImpl;
+import cz.borcizfitu.curvemania.cast.IGameController;
 
 /**
  * Created by Jan Stanek[jan.stanek@ackee.cz] on {8.4.16}
  **/
-public class GameFragment extends Fragment {
+public class GameFragment extends Fragment  {
     public static final String TAG = GameFragment.class.getName();
 
     @Bind(R.id.layout_controlling)
@@ -44,6 +46,7 @@ public class GameFragment extends Fragment {
 
     private boolean mAdmin = false;
     private boolean mGameStarted = false;
+    private IGameController gameController = new GameControllerImpl(getActivity());
 
     @Nullable
     @Override
@@ -51,24 +54,34 @@ public class GameFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_game, container, false);
         ButterKnife.bind(this, view);
 
-        mLeftButton.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    break;
-                case MotionEvent.ACTION_UP:
-                    break;
+        mLeftButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        gameController.onMoveStartLeft();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        gameController.onMoveFinishLeft();
+                        break;
+                }
+                return true;
             }
-            return true;
         });
 
-        mRightButton.setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    break;
-                case MotionEvent.ACTION_UP:
-                    break;
+        mRightButton.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        gameController.onMoveStartRight();
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        gameController.onMoveFinishRight();
+                        break;
+                }
+                return true;
             }
-            return true;
         });
 
         return view;
@@ -78,6 +91,11 @@ public class GameFragment extends Fragment {
     public void onDestroyView() {
         super.onDestroyView();
         ButterKnife.unbind(this);
+    }
+
+    @OnClick(R.id.btn_start_game)
+    public void onStartClicked(){
+        gameController.onStartGame();
     }
 
     public void showActualStatus() {
