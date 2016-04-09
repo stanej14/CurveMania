@@ -51,7 +51,7 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
     FrameLayout mBlurryLayout;
 
     private boolean mIsAdmin = true;
-    private boolean mGameStarted = false;
+    private boolean mGameStarted = true;
     private IGameController gameController = new GameControllerImpl();
 
     @Override
@@ -71,7 +71,7 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_game, container, false);
         ButterKnife.bind(this, view);
-
+        mProgress.setVisibility(View.GONE);
         mLeftButton.setOnTouchListener(new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
@@ -105,7 +105,7 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
                 return true;
             }
         });
-        showActualStatus();
+        //showActualStatus();
         return view;
     }
 
@@ -123,7 +123,7 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
 
     public void setIsAdmin(boolean b) {
         mIsAdmin = b;
-        showActualStatus();
+        //showActualStatus();
     }
 
     public void showActualStatus() {
@@ -149,8 +149,8 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
 
     @Override
     public void onGameStarted() {
-        mGameStarted = true;
-        showActualStatus();
+//        mGameStarted = true;
+//        showActualStatus();
         Log.i(TAG, "onGameStarted:");
     }
 
@@ -161,10 +161,10 @@ public class GameFragment extends Fragment implements GameManagerMessageListener
 
     @Override
     public void onGamePaused() {
-        mGameStarted = false;
-        mIsAdmin = true;
-        
-        showActualStatus();
+//        mGameStarted = false;
+//        mIsAdmin = true;
+//
+//        showActualStatus();
         Log.i(TAG, "onGamePaused: ");
     }
 }

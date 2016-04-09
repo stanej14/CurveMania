@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">CurveMania</string>
     <string name="action_settings">Settings</string>
-    <string name="btn_start">Start the f*****g game!</string>
+    <string name="btn_start">Start!</string>
     <string name="btn_join">Join the f*****g game!</string>
     <string name="media_route_menu_title">Media route</string>
     <string name="connect_label">Connect to the Google Cast device to start playing</string>
