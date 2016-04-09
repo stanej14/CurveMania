@@ -3,6 +3,47 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:id="@+id/layout_controlling"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btn_left"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:drawableLeft="@drawable/ic_keyboard_left"
+            android:drawableStart="@drawable/ic_keyboard_left"
+            android:background="@android:color/white"
+            android:text="Left"
+            android:layout_weight="1"/>
+
+        <View
+            android:layout_width="100dp"
+            android:layout_height="match_parent"
+            android:background="@color/colorPrimary">
+
+        </View>
+        <Button
+            android:id="@+id/btn_right"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:drawableRight="@drawable/ic_keyboard_righ"
+            android:drawableEnd="@drawable/ic_keyboard_righ"
+            android:background="@android:color/white"
+            android:text="Right"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/blurry_layout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#80FFFFFF">
+
+    </FrameLayout>
     <Button
         android:id="@+id/btn_start_game"
         android:layout_width="wrap_content"
@@ -11,26 +52,4 @@
         android:text="@string/btn_start" />
 
     <include layout="@layout/item_progress" />
-
-    <LinearLayout
-        android:id="@+id/layout_controlling"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="horizontal">
-
-        <ImageButton
-            android:id="@+id/btn_left"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_keyboard_left"
-            android:layout_weight="1"/>
-
-        <ImageButton
-            android:id="@+id/btn_right"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_keyboard_righ"
-            android:layout_weight="1"/>
-
-    </LinearLayout>
 </FrameLayout>

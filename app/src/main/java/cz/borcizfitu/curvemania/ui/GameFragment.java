@@ -1,6 +1,7 @@
 package cz.borcizfitu.curvemania.ui;
 
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.InputType;
@@ -9,6 +10,7 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -36,13 +38,16 @@ public class GameFragment extends Fragment  {
     Button mStartButton;
 
     @Bind(R.id.btn_left)
-    ImageButton mLeftButton;
+    Button mLeftButton;
 
     @Bind(R.id.btn_right)
-    ImageButton mRightButton;
+    Button mRightButton;
 
     @Bind(R.id.progress)
     CircularProgressView mProgress;
+
+    @Bind(R.id.blurry_layout)
+    FrameLayout mBlurryLayout;
 
     private boolean mAdmin = false;
     private boolean mGameStarted = false;
@@ -60,9 +65,11 @@ public class GameFragment extends Fragment  {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         gameController.onMoveStartLeft();
+                        mLeftButton.setBackgroundColor(Color.LTGRAY);
                         break;
                     case MotionEvent.ACTION_UP:
                         gameController.onMoveFinishLeft();
+                        mLeftButton.setBackgroundColor(Color.WHITE);
                         break;
                 }
                 return true;
@@ -75,9 +82,11 @@ public class GameFragment extends Fragment  {
                 switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
                         gameController.onMoveStartRight();
+                        mRightButton.setBackgroundColor(Color.LTGRAY);
                         break;
                     case MotionEvent.ACTION_UP:
                         gameController.onMoveFinishRight();
+                        mRightButton.setBackgroundColor(Color.WHITE);
                         break;
                 }
                 return true;
@@ -112,17 +121,20 @@ public class GameFragment extends Fragment  {
         if(mGameStarted){
             mStartButton.setVisibility(View.GONE);
             mProgress.setVisibility(View.GONE);
-            mControllingLayout.setVisibility(View.VISIBLE);
+            mBlurryLayout.setVisibility(View.GONE);
+            mLeftButton.setClickable(true);
+            mRightButton.setClickable(true);
         } else {
             if(mAdmin){
                 mStartButton.setVisibility(View.VISIBLE);
                 mProgress.setVisibility(View.GONE);
-                mControllingLayout.setVisibility(View.GONE);
             } else {
                 mStartButton.setVisibility(View.GONE);
                 mProgress.setVisibility(View.VISIBLE);
-                mControllingLayout.setVisibility(View.GONE);
             }
+            mBlurryLayout.setVisibility(View.VISIBLE);
+            mLeftButton.setClickable(false);
+            mRightButton.setClickable(false);
         }
     }
 }
