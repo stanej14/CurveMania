@@ -20,6 +20,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 
+import java.io.IOException;
 import java.util.Observable;
 
 import cz.borcizfitu.curvemania.Constants;
@@ -34,6 +35,7 @@ public class CastConnectionManager extends Observable {
 
     private final Context mContext;
     private final MediaRouter mMediaRouter;
+    private final MessageReceivedCallback mMessageReceivedCallback;
     private MediaRouteSelector mMediaRouteSelector;
     private MediaRouter.Callback mMediaRouteCallback;
     private CastDevice mSelectedDevice;
@@ -55,6 +57,8 @@ public class CastConnectionManager extends Observable {
 
         // Create a MediaRouter callback for discovery events.
         mMediaRouteCallback = new MediaRouteCallback();
+
+        mMessageReceivedCallback = new MessageReceivedCallback();
     }
 
     /**
@@ -126,7 +130,9 @@ public class CastConnectionManager extends Observable {
     private void connectApiClient() {
         Cast.CastOptions apiOptions = new Cast.CastOptions.Builder(mSelectedDevice, new
                 CastListener())
+                .setVerboseLoggingEnabled(true)
                 .build();
+
         GoogleApiClientConnectionCallback callback = new GoogleApiClientConnectionCallback();
         mApiClient = new GoogleApiClient.Builder(mContext)
                 .addApi(Cast.API, apiOptions)
@@ -219,7 +225,30 @@ public class CastConnectionManager extends Observable {
 
             Cast.CastApi
                     .launchApplication(mApiClient, Constants.APP_ID)
-                    .setResultCallback(new LaunchReceiverApplicationResultCallback());
+                    .setResultCallback(new ResultCallback<ApplicationConnectionResult>() {
+                        @Override
+                        public void onResult(@NonNull ApplicationConnectionResult result) {
+                            Status status = result.getStatus();
+                            ApplicationMetadata appMetaData = result.getApplicationMetadata();
+                            if (status.isSuccess()) {
+                                Log.d(TAG, "Launching game: " + appMetaData.getName());
+                                mCastSessionId = result.getSessionId();
+                                GameManagerClient.getInstanceFor(mApiClient, mCastSessionId).setResultCallback(
+                                        new GameManagerGetInstanceCallback());
+
+                                try {
+                                    Cast.CastApi.setMessageReceivedCallbacks(mApiClient, mMessageReceivedCallback.getNamespace(), mMessageReceivedCallback);
+                                } catch (IOException e) {
+                                    e.printStackTrace();
+                                }
+
+
+                            } else {
+                                Log.d(TAG, "Unable to launch the the game. statusCode: " + result);
+                                setSelectedDevice(null);
+                            }
+                        }
+                    });
         }
 
         @Override
@@ -240,24 +269,6 @@ public class CastConnectionManager extends Observable {
         }
     }
 
-    private final class LaunchReceiverApplicationResultCallback implements
-            ResultCallback<ApplicationConnectionResult> {
-        @Override
-        public void onResult(@NonNull ApplicationConnectionResult result) {
-            Status status = result.getStatus();
-            ApplicationMetadata appMetaData = result.getApplicationMetadata();
-            if (status.isSuccess()) {
-                Log.d(TAG, "Launching game: " + appMetaData.getName());
-                mCastSessionId = result.getSessionId();
-                GameManagerClient.getInstanceFor(mApiClient, mCastSessionId).setResultCallback(
-                        new GameManagerGetInstanceCallback());
-            } else {
-                Log.d(TAG, "Unable to launch the the game. statusCode: " + result);
-                setSelectedDevice(null);
-            }
-        }
-    }
-
     /**
      * GameManagerClient initialization callback.
      */
@@ -274,6 +285,18 @@ public class CastConnectionManager extends Observable {
             mGameManagerClient = gameManagerResult.getGameManagerClient();
             setChanged();
             notifyObservers();
+        }
+    }
+
+    private class MessageReceivedCallback implements Cast.MessageReceivedCallback {
+
+        public String getNamespace() {
+            return "urn:x-cast:cz.borcizfitu.curvemania";
+        }
+
+        @Override
+        public void onMessageReceived(CastDevice castDevice, String namespace, String message) {
+
         }
     }
 
