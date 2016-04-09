@@ -46,7 +46,7 @@ public class GameFragment extends Fragment  {
 
     private boolean mAdmin = false;
     private boolean mGameStarted = false;
-    private IGameController gameController = new GameControllerImpl(getActivity());
+    private IGameController gameController = new GameControllerImpl();
 
     @Nullable
     @Override
@@ -96,6 +96,16 @@ public class GameFragment extends Fragment  {
     @OnClick(R.id.btn_start_game)
     public void onStartClicked(){
         gameController.onStartGame();
+    }
+
+    public void gameStarted(boolean b){
+        mGameStarted = b;
+        showActualStatus();
+    }
+
+    public void amAdmin(boolean b){
+        mGameStarted = b;
+        showActualStatus();
     }
 
     public void showActualStatus() {
